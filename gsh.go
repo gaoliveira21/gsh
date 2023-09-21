@@ -6,17 +6,16 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
+
+	"github.com/gaoliveira21/gsh/builtins"
 )
 
 func getCwd() string {
-	ex, err := os.Executable()
+	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	cwd := filepath.Dir(ex)
 
 	return cwd
 }
@@ -41,13 +40,24 @@ func splitLine(line string) []string {
 func runCmd(args []string) {
 	name := args[0]
 
-	cmd := exec.Command(name, args[1:]...)
+	builtinMap := builtins.GetMap()
+	builtinFn, found := builtinMap[name]
 
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	if found {
+		err := builtinFn(args...)
 
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Println(err)
+		}
+	} else {
+		cmd := exec.Command(name, args[1:]...)
+
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		if err := cmd.Run(); err != nil {
+			log.Println(err)
+		}
 	}
 }
 
