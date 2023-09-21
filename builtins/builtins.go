@@ -15,8 +15,15 @@ func cd(args ...string) error {
 	return err
 }
 
+func exit(args ...string) error {
+	os.Exit(0)
+
+	return nil
+}
+
 func GetMap() map[string]builtinsfn {
 	return map[string]builtinsfn{
-		"cd": cd,
+		"cd":   cd,
+		"exit": exit,
 	}
 }
