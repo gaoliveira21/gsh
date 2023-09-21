@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -37,16 +38,31 @@ func splitLine(line string) []string {
 	return args
 }
 
+func runCmd(args []string) {
+	name := args[0]
+
+	cmd := exec.Command(name, args[1:]...)
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
+}
+
 func main() {
 	log.SetPrefix("gsh: ")
 	log.SetFlags(0)
 
-	cwd := getCwd()
+	for {
+		cwd := getCwd()
 
-	fmt.Printf("%s> ", cwd)
+		fmt.Printf("%s> ", cwd)
 
-	line := readLine()
-	args := splitLine(line)
+		line := readLine()
+		args := splitLine(line)
 
-	fmt.Println(args)
+		runCmd(args)
+	}
 }
