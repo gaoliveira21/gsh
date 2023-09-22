@@ -28,7 +28,7 @@ func readLine() string {
 		log.Fatal(err)
 	}
 
-	return line
+	return strings.TrimSpace(line)
 }
 
 func splitLine(line string) []string {
@@ -71,8 +71,11 @@ func main() {
 		fmt.Printf("%s> ", cwd)
 
 		line := readLine()
-		args := splitLine(line)
 
-		runCmd(args)
+		if line != "" {
+			args := splitLine(line)
+
+			runCmd(args)
+		}
 	}
 }
